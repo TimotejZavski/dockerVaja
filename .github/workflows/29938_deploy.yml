@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    environment: production #ker sem dodal v env
+    environment: vaja_sec #ker sem dodal v env
 
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
