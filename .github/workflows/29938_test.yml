@@ -1,0 +1,63 @@
+name: 29938_test
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  preveri-teste:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preveri obstoj testov
+        run: |
+          if [ ! -f test.sh ]; then
+            echo "Testi ne obstajajo" > napaka.txt
+            exit 1
+          else
+            echo "" > napaka.txt
+          fi
+
+      - name: Upload artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: napaka
+          path: napaka.txt
+
+  zazeni-teste:
+    needs: preveri-teste
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        python: [3.10, 3.11]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artefakt
+        uses: actions/download-artifact@v4
+        with:
+          name: napaka
+
+      - name: Preveri napako
+        run: |
+          if [ -s napaka.txt ]; then
+            echo "Napaka obstaja"
+            exit 1
+          fi
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run test
+        run: |
+          chmod +x test.sh
+          ./test.sh
