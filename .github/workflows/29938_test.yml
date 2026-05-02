@@ -9,18 +9,25 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # presena iz gita na runerja
       - uses: actions/checkout@v4
 
+      # obstaja test?
       - name: Preveri obstoj testov
         run: |
+          # odstrani staro
           rm -f napaka.txt
+
+          # ustavi in zapisi ce ne obstaja
           if [ ! -f test.sh ]; then
             echo "Testi ne obstajajo" > napaka.txt
             exit 1
-          else
-            echo "" > napaka.txt
           fi
 
+          # ok ce obstaja
+          echo "OK" > napaka.txt
+
+      # shrani napaka.txt kot artefakt
       - name: Upload artefakt
         uses: actions/upload-artifact@v4
         with:
@@ -28,36 +35,48 @@ jobs:
           path: napaka.txt
 
   zazeni-teste:
+    # ce prvi uspe se ta zazene
     needs: preveri-teste
     runs-on: self-hosted
 
+    # matrix = testiranje z vecimi verzijami spodi
     strategy:
       matrix:
         python: [3.10, 3.11]
 
     steps:
+      # download kot zgoraj
       - uses: actions/checkout@v4
 
+      # download artefakt iz prvega joba
       - name: Download artefakt
         uses: actions/download-artifact@v4
         with:
           name: napaka
 
+      # preveri vsebino artifakta
       - name: Preveri napako
         run: |
-          if [ -s napaka.txt ]; then
+          # izpisi napako
+          cat napaka.txt
+
+          # fail ce vsebuje "Testi ne obstajajo'
+          if grep -q "Testi ne obstajajo" napaka.txt; then
             echo "Napaka obstaja"
             exit 1
           fi
 
+      # python environment za teste (matrix)
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
+      # odvisnosti
       - name: Install deps
         run: pip install -r requirements.txt
 
+      # run testna skripta
       - name: Run test
         run: |
           chmod +x test.sh
