@@ -13,6 +13,7 @@ jobs:
 
       - name: Preveri obstoj testov
         run: |
+          rm -f napaka.txt
           if [ ! -f test.sh ]; then
             echo "Testi ne obstajajo" > napaka.txt
             exit 1
