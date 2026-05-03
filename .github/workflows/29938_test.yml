@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+env:
+  # ne pisat v /Users/runner.
+  RUNNER_TOOL_CACHE: /Users/timzav/Documents/FERI_/SA/Vaja4/actions-runner/_tool
+  AGENT_TOOLSDIRECTORY: /Users/timzav/Documents/FERI_/SA/Vaja4/actions-runner/_tool
+
 jobs:
   preveri-teste:
     runs-on: self-hosted
