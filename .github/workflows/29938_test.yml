@@ -39,20 +39,14 @@ jobs:
     needs: preveri-teste
     runs-on: self-hosted
 
-    # matrix = testiranje z vecimi verzijami spodi
+    # matrix = dva zaporedna runa na istem env
     strategy:
       matrix:
-        python: ['3.10', '3.11']
+        test_run: ['1', '2']
 
     steps:
       # download kot zgoraj
       - uses: actions/checkout@v4
-
-      # nastavi verzijo iz matrike
-      - name: Nastavi Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
 
       # download artefakt iz prvega joba
       - name: Download artefakt
@@ -72,7 +66,10 @@ jobs:
 
       # odvisnosti
       - name: Install deps
-        run: pip3 install -r requirements.txt
+        run: python3 -m pip install -r requirements.txt
+
+      - name: matrix zagon
+        run: echo "Matrix run ${{ matrix.test_run }}"
 
       # run testna skripta
       - name: Run test
