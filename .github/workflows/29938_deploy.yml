@@ -21,6 +21,9 @@ jobs:
         with:
           name: napaka
           path: ./
+          run-id: ${{ github.event.workflow_run.id }}
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
 
       # cehck da je napaka.txt prazna (so bli testi uspesni?))
       - name: Preveri, da niso napake
