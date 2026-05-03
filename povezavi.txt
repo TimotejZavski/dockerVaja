@@ -1,4 +1,2 @@
 git: github.com/TimotejZavski/dockerVaja
 dock: hub.docker.com/r/timotejzavski/dockervaja
-
-asd
