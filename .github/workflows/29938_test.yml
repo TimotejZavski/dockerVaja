@@ -42,7 +42,7 @@ jobs:
     # matrix = testiranje z vecimi verzijami spodi
     strategy:
       matrix:
-        python: [3.10, 3.11]
+        python: ['3.10', '3.11']
 
     steps:
       # download kot zgoraj
