@@ -8,12 +8,29 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    environment: vaja_sec #ker sem dodal v env
+    environment: vaja_sec #ker sem dodal v env, ne v repo idk
 
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
+
+      # download artefakt napaka.txt iz prvega workflowa
+      - name: Download test artefakt
+        uses: actions/download-artifact@v4
+        with:
+          name: napaka
+          path: ./
+
+      # cehck da je napaka.txt prazna (so bli testi uspesni?))
+      - name: Preveri, da niso napake
+        run: |
+          if [ -s napaka.txt ]; then
+            echo "Testi so imeli napake! Deployment je preklican."
+            cat napaka.txt
+            exit 1
+          fi
+          echo "Testi so uspešni. Nadaljujem z deploymentom..."
 
       - name: Login Docker
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
